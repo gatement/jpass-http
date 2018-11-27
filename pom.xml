@@ -20,6 +20,11 @@
 			<artifactId>netty-all</artifactId>
 			<version>4.1.31.Final</version>
 		</dependency>
+		<dependency>
+			<groupId>com.jcraft</groupId>
+			<artifactId>jsch</artifactId>
+			<version>0.1.55</version>
+		</dependency>
 	</dependencies>
 	<build>
 		<finalName>jproxy</finalName>
