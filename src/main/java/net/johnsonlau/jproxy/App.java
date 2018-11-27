@@ -14,7 +14,8 @@ public class App {
 			port = Integer.parseInt(args[0]);
 		}
 
-		new DiscardServer(port).run();
+		//new DiscardServer(port).run();
+		TimeClient.main("localhost", port);
 	}
 
 	public static void main2(String[] args) {
