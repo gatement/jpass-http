@@ -7,15 +7,8 @@ import com.jcraft.jsch.UserInfo;
 
 public class App {
 	public static void main(String[] args) throws Exception {
-		System.out.println("Hello World!");
-
-		int port = 8119;
-		if (args.length > 0) {
-			port = Integer.parseInt(args[0]);
-		}
-
-		new DiscardServer(port).run();
-		//TimeClient.main("localhost", port);
+		System.out.println("Start http proxy at port: " + String.valueOf(Settings.PROXY_PORT));
+		new ProxyServer(Settings.PROXY_PORT);
 	}
 
 	public static void main2(String[] args) {
