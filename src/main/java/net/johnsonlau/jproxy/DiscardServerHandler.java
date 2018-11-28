@@ -7,20 +7,30 @@ import io.netty.util.ReferenceCountUtil;
 
 public class DiscardServerHandler extends ChannelInboundHandlerAdapter { // (1)
 
+    @Override
+    public void handlerAdded(ChannelHandlerContext ctx) throws Exception {
+		System.out.println(Thread.currentThread().getName() + ": handlerAdded");
+    }
+
+    @Override
+    public void handlerRemoved(ChannelHandlerContext ctx) throws Exception {
+		System.out.println(Thread.currentThread().getName() + ": handlerRemoved");
+    }
+
 	@Override
 	public void channelRead(ChannelHandlerContext ctx, Object msg) { // (2)
-	   // ByteBuf in = (ByteBuf) msg;
-	   // try {
-	   //     while (in.isReadable()) { // (1)
-	   //         System.out.print((char) in.readByte());
-	   //         System.out.flush();
-
-	   //     }
-	   // } finally {
-	   //     ReferenceCountUtil.release(msg); // (2)
-	   // }
-	   ctx.write(msg); // (1)
-	   ctx.flush(); // (2)
+	    ByteBuf in = (ByteBuf) msg;
+	    try {
+	        while (in.isReadable()) { // (1)
+	            System.out.print(Thread.currentThread().getName() + ": ");
+	            System.out.println((char) in.readByte());
+	            System.out.flush();
+	        }
+	    } finally {
+	        ReferenceCountUtil.release(msg); // (2)
+	    }
+	   //ctx.write(msg); // (1)
+	   //ctx.flush(); // (2)
 	}
 
 	@Override
