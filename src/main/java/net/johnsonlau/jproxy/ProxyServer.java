@@ -1,42 +1,24 @@
 package net.johnsonlau.jproxy;
 
-import io.netty.bootstrap.ServerBootstrap;
-import io.netty.channel.ChannelFuture;
-import io.netty.channel.ChannelInitializer;
-import io.netty.channel.ChannelOption;
-import io.netty.channel.EventLoopGroup;
-import io.netty.channel.nio.NioEventLoopGroup;
-import io.netty.channel.socket.SocketChannel;
-import io.netty.channel.socket.nio.NioServerSocketChannel;
+import java.net.ServerSocket;
 
 public class ProxyServer {
 
 	private int port;
+	private ServerSocket serverSocket;
 
 	public ProxyServer(int port) {
 		this.port = port;
 	}
 
 	public void run() throws Exception {
-		EventLoopGroup bossGroup = new NioEventLoopGroup();
-		EventLoopGroup workerGroup = new NioEventLoopGroup();
 		try {
-			ServerBootstrap b = new ServerBootstrap();
-			b.group(bossGroup, workerGroup).channel(NioServerSocketChannel.class)
-					.childHandler(new ChannelInitializer<SocketChannel>() {
-						@Override
-						public void initChannel(SocketChannel ch) throws Exception {
-							ch.pipeline().addLast(new ProxyHandler());
-						}
-					}).option(ChannelOption.SO_BACKLOG, 128)
-					.childOption(ChannelOption.SO_KEEPALIVE, true);
-
-			// Bind and start to accept incoming connections.
-			ChannelFuture f = b.bind(port).sync();
-			f.channel().closeFuture().sync();
+			serverSocket = new ServerSocket(port);
+			while (true) {
+				new ProxySocketHandle(serverSocket.accept()).start();
+			}
 		} finally {
-			workerGroup.shutdownGracefully();
-			bossGroup.shutdownGracefully();
+			serverSocket.close();
 		}
 	}
 }
