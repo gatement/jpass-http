@@ -64,9 +64,13 @@ public class ProxySocketHandle extends Thread {
             //新开线程转发客户端请求至目标服务器
             new ProxyStreamingThread(clientInput, proxyOutput).start();
             //转发目标服务器响应至客户端
-            while (true) {
-                clientOutput.write(proxyInput.read());
-            }
+
+			// Receive target response
+			int data = proxyInput.read();
+			while (data != -1) {
+				clientOutput.write(data);
+				data = proxyInput.read();
+			}
         } catch (IOException e) {
             e.printStackTrace();
         } finally {

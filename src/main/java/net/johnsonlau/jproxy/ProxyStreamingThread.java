@@ -17,11 +17,13 @@ public class ProxyStreamingThread extends Thread {
 	@Override
 	public void run() {
 		try {
-			while (true) {
-				output.write(input.read());
+			int data = input.read();
+			while (data != -1) {
+				output.write(data);
+				data = input.read();
 			}
 		} catch (IOException e) {
-			e.printStackTrace();
+			//e.printStackTrace();
 		}
 	}
 }
