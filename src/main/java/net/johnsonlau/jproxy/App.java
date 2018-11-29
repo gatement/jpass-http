@@ -8,7 +8,7 @@ import com.jcraft.jsch.UserInfo;
 public class App {
 	public static void main(String[] args) throws Exception {
 		System.out.println("Start http proxy at port: " + String.valueOf(Settings.PROXY_PORT));
-		new ProxyServer(Settings.PROXY_PORT);
+		new ProxyServer(Settings.PROXY_PORT).run();
 	}
 
 	public static void main2(String[] args) {
