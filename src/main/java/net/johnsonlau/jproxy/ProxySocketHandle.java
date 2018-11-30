@@ -9,6 +9,7 @@ import java.net.Socket;
 import java.net.SocketException;
 
 import com.jcraft.jsch.Channel;
+import com.jcraft.jsch.JSchException;
 
 public class ProxySocketHandle extends Thread {
 
@@ -35,6 +36,7 @@ public class ProxySocketHandle extends Thread {
 			StringBuilder headStr = new StringBuilder();
 			while (null != (line = bufferedReader.readLine())) {
 				// System.out.println(line);
+				if (line.length() == 0) System.out.println("EMPTY LINE!!!!!");
 				headStr.append(line + "\r\n");
 
 				if (line.length() == 0) {
@@ -54,7 +56,16 @@ public class ProxySocketHandle extends Thread {
 					}
 				}
 			}
-			String type = headStr.substring(0, headStr.indexOf(" "));
+
+			Util.printBytes(headStr.toString().getBytes());
+			// String type = headStr.substring(0, headStr.indexOf(" "));
+			String type = "";
+			try {
+				type = headStr.substring(0, headStr.indexOf(" "));
+			} catch (Exception ex) {
+				Util.printBytes(headStr.toString().getBytes());
+				ex.printStackTrace();
+			}
 
 			// Connect target server
 			System.out.println("Connect target " + targetHost + ":" + String.valueOf(targetPort));
@@ -64,7 +75,12 @@ public class ProxySocketHandle extends Thread {
 			Channel sshChannel = SshClient.sshClient.getStreamForwarder(targetHost, targetPort);
 			proxyInput = sshChannel.getInputStream();
 			proxyOutput = sshChannel.getOutputStream();
-			sshChannel.connect(5000);
+			//try {
+				sshChannel.connect(5000);
+			//} catch (JSchException ex) {
+			//	System.out.println("");
+			//	ex.printStackTrace();
+			//}
 
 			if ("CONNECT".equalsIgnoreCase(type)) {
 				// For HTTPS request, consume the HTTP header and send back response
@@ -73,19 +89,17 @@ public class ProxySocketHandle extends Thread {
 			} else {
 				// For HTTP request, send the HTTP header
 				proxyOutput.write(headStr.toString().getBytes());
+				proxyOutput.flush();
 			}
 
 			// New thread continue sending data to target server
 			new ProxyStreamingThread(clientInput, proxyOutput).start();
 
 			// Receive target response
-			System.out.println("about to read: isClosed=" + String.valueOf(sshChannel.isClosed()) + ", isConnected="
-					+ String.valueOf(sshChannel.isConnected()) + ", isEOF=" + String.valueOf(sshChannel.isEOF()));
 			int data = proxyInput.read();
-			System.out.println(String.valueOf(data));
 			while (data != -1) {
-				System.out.print("i");
 				clientOutput.write(data);
+				clientOutput.flush();
 				data = proxyInput.read();
 			}
 		} catch (SocketException ex) {

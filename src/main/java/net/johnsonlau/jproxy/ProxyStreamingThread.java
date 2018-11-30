@@ -20,8 +20,8 @@ public class ProxyStreamingThread extends Thread {
 		try {
 			int data = input.read();
 			while (data != -1) {
-				System.out.print("o");
 				output.write(data);
+				output.flush();
 				data = input.read();
 			}
 		} catch (SocketException ex) {
