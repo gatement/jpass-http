@@ -3,6 +3,7 @@ package net.johnsonlau.jproxy;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.SocketException;
 
 public class ProxyStreamingThread extends Thread {
 
@@ -19,11 +20,15 @@ public class ProxyStreamingThread extends Thread {
 		try {
 			int data = input.read();
 			while (data != -1) {
+				System.out.print("o");
 				output.write(data);
 				data = input.read();
 			}
-		} catch (IOException e) {
-			//e.printStackTrace();
+		} catch (SocketException ex) {
+			// Peer closed the connection
+		}
+		catch (IOException ex) {
+			ex.printStackTrace();
 		}
 	}
 }

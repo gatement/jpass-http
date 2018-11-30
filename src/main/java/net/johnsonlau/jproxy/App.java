@@ -6,8 +6,8 @@ public class App {
 			SshClient.connect();
 			System.out.println("SSH connected, start http proxy at port: " + String.valueOf(Settings.PROXY_PORT));
 			new ProxyServer(Settings.PROXY_PORT).run();
-		} catch (Exception e) {
-			System.out.println(e);
+		} catch (Exception ex) {
+			ex.printStackTrace();
 		}
 	}
 }

@@ -17,6 +17,8 @@ public class ProxyServer {
 			while (true) {
 				new ProxySocketHandle(serverSocket.accept()).start();
 			}
+		} catch (Exception ex) {
+			ex.printStackTrace();
 		} finally {
 			serverSocket.close();
 		}
