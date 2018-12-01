@@ -14,6 +14,7 @@ public class ProxySocketHandle extends Thread {
 
 	public ProxySocketHandle(Socket socket) {
 		this.socket = socket;
+		Util.log("Creating connection, connection count = " + Integer.valueOf(Util.connectionCount.incrementAndGet()));
 	}
 
 	@Override
@@ -23,6 +24,7 @@ public class ProxySocketHandle extends Thread {
 		Socket proxySocket = null;
 		InputStream proxyInput = null;
 		OutputStream proxyOutput = null;
+		Channel sshChannel = null;
 		try {
 			clientInput = socket.getInputStream();
 			clientOutput = socket.getOutputStream();
@@ -54,11 +56,11 @@ public class ProxySocketHandle extends Thread {
 					}
 
 					// Connect target server
-					System.out.println("Connect target " + targetHost + ":" + String.valueOf(targetPort));
+					Util.log("Connect target " + targetHost + ":" + String.valueOf(targetPort));
 					// proxySocket = new Socket(targetHost, targetPort);
 					// proxyInput = proxySocket.getInputStream();
 					// proxyOutput = proxySocket.getOutputStream();
-					Channel sshChannel = SshClient.sshClient.getStreamForwarder(targetHost, targetPort);
+					sshChannel = SshClient.sshClient.getStreamForwarder(targetHost, targetPort);
 					proxyInput = sshChannel.getInputStream();
 					proxyOutput = sshChannel.getOutputStream();
 					sshChannel.connect(5000);
@@ -81,15 +83,17 @@ public class ProxySocketHandle extends Thread {
 				inputByte = clientInput.read();
 			}
 
-			// New thread continue sending data to target server
-			new ProxyStreamingThread(clientInput, proxyOutput).start();
+			if (sshChannel != null) {
+				// New thread continue sending data to target server
+				new ProxyStreamingThread(clientInput, proxyOutput).start();
 
-			// Receive target response
-			int outputByte = proxyInput.read();
-			while (outputByte != -1) {
-				clientOutput.write(outputByte);
-				clientOutput.flush();
-				outputByte = proxyInput.read();
+				// Receive target response
+				int outputByte = proxyInput.read();
+				while (outputByte != -1) {
+					clientOutput.write(outputByte);
+					clientOutput.flush();
+					outputByte = proxyInput.read();
+				}
 			}
 		} catch (SocketException ex) {
 			// peer closed the socket
@@ -138,6 +142,15 @@ public class ProxySocketHandle extends Thread {
 					e.printStackTrace();
 				}
 			}
+			if (sshChannel != null) {
+				try {
+					sshChannel.disconnect();
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+
+	        Util.log("Closed connection, connection count = " + Integer.valueOf(Util.connectionCount.decrementAndGet()));
 		}
 	}
 }

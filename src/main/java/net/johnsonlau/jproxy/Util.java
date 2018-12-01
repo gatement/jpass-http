@@ -1,6 +1,17 @@
 package net.johnsonlau.jproxy;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.concurrent.atomic.AtomicInteger;
+
 public class Util {
+	public static AtomicInteger connectionCount = new AtomicInteger(0);
+
+	public static void log(String msg) {
+		String dateString = "[" + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()) + "] ";
+		System.out.println(dateString + msg);
+	}
+
 	public static void printBytes(byte[] input) {
 		for (int i = 0; i < input.length; i++) {
 			if (i % 16 == 0) {
