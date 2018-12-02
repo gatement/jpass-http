@@ -38,23 +38,18 @@ public class ProxySocketHandle extends Thread {
 				// Finish receiving HTTP headers
 				if (headStr.length() > 4
 						&& headStr.substring(headStr.length() - 4, headStr.length()).equals("\r\n\r\n")) {
-					Util.log(headStr.toString());
-					Util.printBytes(headStr.toString().getBytes());
-					// Extract target server
-					String targetHost = "";
+					//Util.log(headStr.toString());
+					//Util.printBytes(headStr.toString().getBytes());
+
+					// Extract HTTP method and target server
+					// Example: CONNECT www.example.com:443 HTTP/1.1
+					String[] firstLine = headStr.toString().split("\r\n")[0].split(" ");
+					String httpMethod = firstLine[0];
+					String[] host = firstLine[1].split(":");
+					String targetHost = host[0];
 					int targetPort = 80;
-					for (String headLine : headStr.toString().split("\r\n")) {
-						String headName = headLine.substring(0, headLine.indexOf(" "));
-						// Example1: "Host: www.example.com"
-						// Example2: "Host: www.example.com:443"
-						if ("Host:".equals(headName)) {
-							String[] host = headLine.split(" ")[1].split(":");
-							targetHost = host[0];
-							if (host.length > 1) {
-								targetPort = Integer.valueOf(host[1]);
-							}
-							break;
-						}
+					if (host.length > 1) {
+						targetPort = Integer.valueOf(host[1]);
 					}
 
 					// Connect target server
@@ -66,9 +61,8 @@ public class ProxySocketHandle extends Thread {
 					proxyInput = sshChannel.getInputStream();
 					proxyOutput = sshChannel.getOutputStream();
 
-					// Extract HTTP Method and process CONNECT
-					String type = headStr.substring(0, headStr.indexOf(" "));
-					if ("CONNECT".equalsIgnoreCase(type)) {
+					// Process HTTP Method CONNECT
+					if ("CONNECT".equalsIgnoreCase(httpMethod)) {
 						// For HTTPS request, consume the initiative HTTP request and send back response
 						clientOutput.write("HTTP/1.1 200 Connection Established\r\n\r\n".getBytes());
 						clientOutput.flush();
