@@ -14,7 +14,8 @@ public class ProxySocketHandle extends Thread {
 
 	public ProxySocketHandle(Socket socket) {
 		this.socket = socket;
-		Util.log("Creating connection, connection count = " + Integer.valueOf(Util.connectionCount.incrementAndGet()));
+		Util.log("Creating connection, connection count up to = "
+				+ Integer.valueOf(Util.connectionCount.incrementAndGet()));
 	}
 
 	@Override
@@ -37,7 +38,8 @@ public class ProxySocketHandle extends Thread {
 				// Finish receiving HTTP headers
 				if (headStr.length() > 4
 						&& headStr.substring(headStr.length() - 4, headStr.length()).equals("\r\n\r\n")) {
-					// Util.printBytes(headStr.toString().getBytes());
+					Util.log(headStr.toString());
+					Util.printBytes(headStr.toString().getBytes());
 					// Extract target server
 					String targetHost = "";
 					int targetPort = 80;
@@ -60,10 +62,9 @@ public class ProxySocketHandle extends Thread {
 					// proxySocket = new Socket(targetHost, targetPort);
 					// proxyInput = proxySocket.getInputStream();
 					// proxyOutput = proxySocket.getOutputStream();
-					sshChannel = SshClient.sshClient.getStreamForwarder(targetHost, targetPort);
+					sshChannel = SshClient.getStreamForwarder(targetHost, targetPort, false);
 					proxyInput = sshChannel.getInputStream();
 					proxyOutput = sshChannel.getOutputStream();
-					sshChannel.connect(5000);
 
 					// Extract HTTP Method and process CONNECT
 					String type = headStr.substring(0, headStr.indexOf(" "));
@@ -150,7 +151,8 @@ public class ProxySocketHandle extends Thread {
 				}
 			}
 
-	        Util.log("Closed connection, connection count = " + Integer.valueOf(Util.connectionCount.decrementAndGet()));
+			Util.log("Closed connection, connection count down to = "
+					+ Integer.valueOf(Util.connectionCount.decrementAndGet()));
 		}
 	}
 }
