@@ -38,18 +38,33 @@ public class ProxySocketHandler extends Thread {
 				// Finish receiving HTTP headers
 				if (headStr.length() > 4
 						&& headStr.substring(headStr.length() - 4, headStr.length()).equals("\r\n\r\n")) {
-					//Util.log(headStr.toString());
-					//Util.printBytes(headStr.toString().getBytes());
+					// Util.log(headStr.toString());
+					// Util.printBytes(headStr.toString().getBytes());
 
 					// Extract HTTP method and target server
-					// Example: CONNECT www.example.com:443 HTTP/1.1
+					// Example1: CONNECT www.example.com:443 HTTP/1.1
+					// Example2: POST http://www.example.com/a/b/c HTTP/1.1
 					String[] firstLine = headStr.toString().split("\r\n")[0].split(" ");
 					String httpMethod = firstLine[0];
-					String[] host = firstLine[1].split(":");
-					String targetHost = host[0];
+
+					String hostLine = firstLine[1];
+					String targetHost = "";
 					int targetPort = 80;
-					if (host.length > 1) {
-						targetPort = Integer.valueOf(host[1]);
+					if (hostLine.startsWith("http")) {
+						Util.log(hostLine);
+						String[] host = hostLine.split("://")[1].split("/")[0].split(":");
+						targetHost = host[0];
+						targetPort = 80;
+						if (host.length > 1) {
+							targetPort = Integer.valueOf(host[1]);
+						}
+					} else {
+						String[] host = hostLine.split(":");
+						targetHost = host[0];
+						targetPort = 80;
+						if (host.length > 1) {
+							targetPort = Integer.valueOf(host[1]);
+						}
 					}
 
 					// Connect target server

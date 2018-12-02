@@ -18,8 +18,8 @@ public class SshClient {
 			sshSession = sshClient.getSession(Settings.SSH_USER, Settings.SSH_HOST, Settings.SSH_PORT);
 			sshSession.setPassword(Settings.SSH_PWD);
 			sshSession.setConfig("StrictHostKeyChecking", "no"); // ask | yes | no
-			sshSession.setServerAliveCountMax(3);
-			sshSession.setServerAliveInterval(30000);
+			sshSession.setServerAliveCountMax(Settings.SSH_ALIVE_MAX_COUNT);
+			sshSession.setServerAliveInterval(Settings.SSH_ALIVE_INTERVAL_MS);
 			sshSession.setDaemonThread(true);
 			sshSession.connect();
 			Util.log("SSH client version: " + sshSession.getClientVersion() + ", server version: "
@@ -33,11 +33,10 @@ public class SshClient {
 			throws JSchException, IOException {
 		try {
 			Channel channel = SshClient.sshSession.getStreamForwarder(targetHost, targetPort);
-			channel.connect(5000);
+			channel.connect(Settings.SSH_CHANNEL_OPEN_TIMEOUT_MS);
 			return channel;
 		} catch (JSchException ex) {
-			// session is down
-			if (!retrying) {
+			if (!retrying && "session is down".equals(ex.getMessage())) {
 				Util.log("Reconnecting SSH Tunnel");
 				connect();
 				return getStreamForwarder(targetHost, targetPort, true);
