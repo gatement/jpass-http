@@ -22,7 +22,7 @@ public class SshClient {
 			sshSession.setServerAliveInterval(Settings.SSH_ALIVE_INTERVAL_MS);
 			sshSession.setDaemonThread(true);
 			sshSession.connect();
-			Util.log("SSH client version: " + sshSession.getClientVersion() + ", server version: "
+			Util.log("SSH client ver: " + sshSession.getClientVersion() + ", server ver: "
 					+ sshSession.getServerVersion());
 		} catch (Exception ex) {
 			ex.printStackTrace();
