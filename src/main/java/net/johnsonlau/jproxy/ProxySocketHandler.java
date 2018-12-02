@@ -8,11 +8,11 @@ import java.net.SocketException;
 
 import com.jcraft.jsch.Channel;
 
-public class ProxySocketHandle extends Thread {
+public class ProxySocketHandler extends Thread {
 
 	private Socket socket;
 
-	public ProxySocketHandle(Socket socket) {
+	public ProxySocketHandler(Socket socket) {
 		this.socket = socket;
 		Util.log("Creating connection, connection count up to = "
 				+ Integer.valueOf(Util.connectionCount.incrementAndGet()));
