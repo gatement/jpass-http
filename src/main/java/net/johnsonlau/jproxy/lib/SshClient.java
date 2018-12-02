@@ -1,4 +1,4 @@
-package net.johnsonlau.jproxy;
+package net.johnsonlau.jproxy.lib;
 
 import java.io.IOException;
 
@@ -14,15 +14,18 @@ public class SshClient {
 	public static void connect() {
 		try {
 			closeSession();
+
 			sshClient = new JSch();
-			sshSession = sshClient.getSession(Settings.SSH_USER, Settings.SSH_HOST, Settings.SSH_PORT);
-			sshSession.setPassword(Settings.SSH_PWD);
+			sshSession = sshClient.getSession(ProxyMain.settings.getSshUser(), ProxyMain.settings.getSshHost(),
+					ProxyMain.settings.getSshPort());
+			sshSession.setPassword(ProxyMain.settings.getSshPwd());
 			sshSession.setConfig("StrictHostKeyChecking", "no"); // ask | yes | no
-			sshSession.setServerAliveCountMax(Settings.SSH_ALIVE_MAX_COUNT);
-			sshSession.setServerAliveInterval(Settings.SSH_ALIVE_INTERVAL_MS);
+			sshSession.setServerAliveCountMax(ProxyMain.settings.getSshAliveMaxCount());
+			sshSession.setServerAliveInterval(ProxyMain.settings.getSshAliveIntervalMs());
 			sshSession.setDaemonThread(true);
 			sshSession.connect();
-			Util.log("SSH client ver: " + sshSession.getClientVersion() + ", server ver: "
+
+			ProxyMain.log.info("SSH client ver: " + sshSession.getClientVersion() + ", server ver: "
 					+ sshSession.getServerVersion());
 		} catch (Exception ex) {
 			ex.printStackTrace();
@@ -33,11 +36,11 @@ public class SshClient {
 			throws JSchException, IOException {
 		try {
 			Channel channel = SshClient.sshSession.getStreamForwarder(targetHost, targetPort);
-			channel.connect(Settings.SSH_CHANNEL_OPEN_TIMEOUT_MS);
+			channel.connect(ProxyMain.settings.getSshChannelOpenTimeoutMs());
 			return channel;
 		} catch (JSchException ex) {
 			if (!retrying && "session is down".equals(ex.getMessage())) {
-				Util.log("Reconnecting SSH Tunnel");
+				ProxyMain.log.info("Reconnecting SSH Tunnel");
 				connect();
 				return getStreamForwarder(targetHost, targetPort, true);
 			} else {

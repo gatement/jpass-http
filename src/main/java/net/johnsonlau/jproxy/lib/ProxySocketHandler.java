@@ -1,4 +1,4 @@
-package net.johnsonlau.jproxy;
+package net.johnsonlau.jproxy.lib;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -14,8 +14,8 @@ public class ProxySocketHandler extends Thread {
 
 	public ProxySocketHandler(Socket socket) {
 		this.socket = socket;
-		Util.log("Creating connection, connection count up to = "
-				+ Integer.valueOf(Util.connectionCount.incrementAndGet()));
+		ProxyMain.log.info("Creating connection, connection count up to = "
+				+ Integer.valueOf(ProxyMain.connectionCount.incrementAndGet()));
 	}
 
 	@Override
@@ -51,7 +51,6 @@ public class ProxySocketHandler extends Thread {
 					String targetHost = "";
 					int targetPort = 80;
 					if (hostLine.startsWith("http")) {
-						Util.log(hostLine);
 						String[] host = hostLine.split("://")[1].split("/")[0].split(":");
 						targetHost = host[0];
 						targetPort = 80;
@@ -68,7 +67,7 @@ public class ProxySocketHandler extends Thread {
 					}
 
 					// Connect target server
-					Util.log("Connect target " + targetHost + ":" + String.valueOf(targetPort));
+					ProxyMain.log.info("Connect target " + targetHost + ":" + String.valueOf(targetPort));
 					// proxySocket = new Socket(targetHost, targetPort);
 					// proxyInput = proxySocket.getInputStream();
 					// proxyOutput = proxySocket.getOutputStream();
@@ -160,8 +159,8 @@ public class ProxySocketHandler extends Thread {
 				}
 			}
 
-			Util.log("Closed connection, connection count down to = "
-					+ Integer.valueOf(Util.connectionCount.decrementAndGet()));
+			ProxyMain.log.info("Closed connection, connection count down to = "
+					+ Integer.valueOf(ProxyMain.connectionCount.decrementAndGet()));
 		}
 	}
 }

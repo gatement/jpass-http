@@ -1,4 +1,4 @@
-package net.johnsonlau.jproxy;
+package net.johnsonlau.jproxy.lib;
 
 import java.io.IOException;
 import java.io.InputStream;
