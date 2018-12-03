@@ -17,12 +17,14 @@ public class ProxyStreamingThread extends Thread {
 	@Override
 	public void run() {
 		try {
-			int data = input.read();
-			while (data != -1) {
-				output.write(data);
+			byte[] data = new byte[65536]; // 64KB
+			int readCount = input.read(data);
+			while (readCount != -1) {
+				output.write(data, 0, readCount);
 				output.flush();
-				data = input.read();
+				readCount = input.read(data);
 			}
+
 		} catch (IOException ex) {
 			// Peer closed the connection
 			// ex.printStackTrace();

@@ -97,11 +97,12 @@ public class ProxySocketHandler extends Thread {
 				new ProxyStreamingThread(clientInput, proxyOutput).start();
 
 				// Receive target response
-				int outputByte = proxyInput.read();
-				while (outputByte != -1) {
-					clientOutput.write(outputByte);
+				byte[] data = new byte[65536]; // 64KB
+				int readCount = proxyInput.read(data);
+				while (readCount != -1) {
+					clientOutput.write(data, 0, readCount);
 					clientOutput.flush();
-					outputByte = proxyInput.read();
+					readCount = proxyInput.read(data);
 				}
 			}
 		} catch (SocketException ex) {

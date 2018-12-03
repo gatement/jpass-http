@@ -1,4 +1,4 @@
-package net.johnsonlau.jproxy;
+package net.johnsonlau.jproxy.conf;
 
 import net.johnsonlau.jproxy.lib.conf.ProxySettings;
 
@@ -21,6 +21,6 @@ public class MyProxySettings extends ProxySettings {
 
 	@Override
 	public String getSshPwd() {
-		return "KAwIc4SSJqbpUju9";
+		return "123456";
 	}
 }
