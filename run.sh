@@ -1,1 +1,0 @@
-./mvnw clean compile exec:java -Dexec.mainClass=net.johnsonlau.jproxy.App

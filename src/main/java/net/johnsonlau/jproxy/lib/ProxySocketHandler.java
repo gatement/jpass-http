@@ -38,12 +38,9 @@ public class ProxySocketHandler extends Thread {
 				// Finish receiving HTTP headers
 				if (headStr.length() > 4
 						&& headStr.substring(headStr.length() - 4, headStr.length()).equals("\r\n\r\n")) {
-					// Util.log(headStr.toString());
-					// Util.printBytes(headStr.toString().getBytes());
-
-					// Extract HTTP method and target server
-					// Example1: CONNECT www.example.com:443 HTTP/1.1
-					// Example2: POST http://www.example.com/a/b/c HTTP/1.1
+					// Extract HTTP method and target server:
+					//   Example1: CONNECT www.example.com:443 HTTP/1.1
+					//   Example2: POST http://www.example.com/a/b/c HTTP/1.1
 					String[] firstLine = headStr.toString().split("\r\n")[0].split(" ");
 					String httpMethod = firstLine[0];
 
@@ -68,12 +65,16 @@ public class ProxySocketHandler extends Thread {
 
 					// Connect target server
 					ProxyMain.log.info("Connect target " + targetHost + ":" + String.valueOf(targetPort));
-					// proxySocket = new Socket(targetHost, targetPort);
-					// proxyInput = proxySocket.getInputStream();
-					// proxyOutput = proxySocket.getOutputStream();
+
+					// Use SSH Tunnel to connect remote server
 					sshChannel = SshClient.getStreamForwarder(targetHost, targetPort, false);
 					proxyInput = sshChannel.getInputStream();
 					proxyOutput = sshChannel.getOutputStream();
+
+					// Optional: Connect remote server directly
+					// proxySocket = new Socket(targetHost, targetPort);
+					// proxyInput = proxySocket.getInputStream();
+					// proxyOutput = proxySocket.getOutputStream();
 
 					// Process HTTP Method CONNECT
 					if ("CONNECT".equalsIgnoreCase(httpMethod)) {
