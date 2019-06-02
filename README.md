@@ -1,5 +1,5 @@
 ## configure
-* edit `src/main/java/net/johnsonlau/jproxy/conf/MyProxySettings.java`
+* edit `src/main/java/net/johnsonlau/jproxy/App.java`
 
 ## debug
 * `./mvnw exec:java -Dexec.mainClass=net.johnsonlau.jproxy.App`

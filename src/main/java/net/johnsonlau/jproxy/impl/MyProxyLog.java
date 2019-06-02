@@ -1,4 +1,4 @@
-package net.johnsonlau.jproxy.conf;
+package net.johnsonlau.jproxy.impl;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;

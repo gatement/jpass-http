@@ -16,9 +16,11 @@ public class SshClient {
 			closeSession();
 
 			sshClient = new JSch();
-			sshSession = sshClient.getSession(ProxyMain.settings.getSshUser(), ProxyMain.settings.getSshHost(),
-					ProxyMain.settings.getSshPort());
-			sshSession.setPassword(ProxyMain.settings.getSshPwd());
+			sshSession = sshClient.getSession(
+					ProxyMain.settings.getUsername(), 
+					ProxyMain.settings.getServerAddr(),
+					ProxyMain.settings.getServerPort());
+			sshSession.setPassword(ProxyMain.settings.getPassword());
 			sshSession.setConfig("StrictHostKeyChecking", "no"); // ask | yes | no
 			sshSession.setServerAliveCountMax(ProxyMain.settings.getSshAliveMaxCount());
 			sshSession.setServerAliveInterval(ProxyMain.settings.getSshAliveIntervalMs());
