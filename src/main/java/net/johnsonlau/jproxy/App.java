@@ -11,7 +11,7 @@ public class App {
 		settings.setServerPort(Integer.parseInt(System.getProperty("serverPort", "22")));
 		settings.setUsername(System.getProperty("username", "root"));
 		settings.setPassword(System.getProperty("password", ""));
-		settings.setProxyPort(Integer.parseInt(System.getProperty("serverPort", "8119")));
+		settings.setProxyPort(Integer.parseInt(System.getProperty("proxyPort", "8119")));
 		
 		new ProxyMain(settings, new MyProxyLog()).run();
 	}
