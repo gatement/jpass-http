@@ -1,7 +1,7 @@
 package net.johnsonlau.jproxy;
 
 import net.johnsonlau.jproxy.impl.MyProxyLog;
-import net.johnsonlau.jproxy.lib.ProxyMain;
+import net.johnsonlau.jproxy.lib.ProxyServer;
 import net.johnsonlau.jproxy.lib.conf.ProxySettings;
 
 public class App {
@@ -13,6 +13,7 @@ public class App {
 		settings.setPassword(System.getProperty("password", ""));
 		settings.setProxyPort(Integer.parseInt(System.getProperty("proxyPort", "8119")));
 		
-		new ProxyMain(settings, new MyProxyLog()).run();
+        final Thread thread = new Thread(new ProxyServer(settings, new MyProxyLog()), "ProxyThread");
+        thread.run();
 	}
 }

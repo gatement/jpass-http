@@ -1,26 +1,48 @@
 package net.johnsonlau.jproxy.lib;
 
 import java.net.ServerSocket;
+import java.net.Socket;
+import java.util.concurrent.atomic.AtomicInteger;
 
-public class ProxyServer {
+import net.johnsonlau.jproxy.lib.conf.ProxyLog;
+import net.johnsonlau.jproxy.lib.conf.ProxySettings;
 
-	private int port;
-	private ServerSocket serverSocket;
+public class ProxyServer implements Runnable {
+	public static ProxySettings settings;
+	public static ProxyLog log;
+	public static AtomicInteger connectionCount = new AtomicInteger(0);
 
-	public ProxyServer(int port) {
-		this.port = port;
+	public ProxyServer(ProxySettings settings, ProxyLog log) {
+		ProxyServer.settings = settings;
+		ProxyServer.log = log;
 	}
 
-	public void run() throws Exception {
+	public void run() {
+	    ServerSocket serverSocket = null;
 		try {
-			serverSocket = new ServerSocket(port);
+			SshClient.connect();
+			serverSocket = new ServerSocket(ProxyServer.settings.getProxyPort());
+			log.info("Http proxy started at port: " + String.valueOf(settings.getProxyPort()));
 			while (true) {
-				new ProxySocketHandler(serverSocket.accept()).start();
+				Socket socket = serverSocket.accept();
+				new ProxySocketHandler(socket).start();
+				
+				Thread.sleep(1); // allow for interrupting
 			}
+		} catch (InterruptedException ex) {
+			log.info("Http proxy is closed.");
 		} catch (Exception ex) {
+			log.info("exception: " + ex.getMessage());
 			ex.printStackTrace();
 		} finally {
-			serverSocket.close();
+			if (serverSocket != null) {
+				try {
+				    serverSocket.close();
+				} catch (Exception ex) {
+         			log.info("exception: " + ex.getMessage());
+					ex.printStackTrace();
+				}
+			}
 		}
 	}
 }

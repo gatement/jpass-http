@@ -8,27 +8,25 @@ import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
 
 public class SshClient {
-	private static JSch sshClient;
 	public static Session sshSession;
 
 	public static void connect() {
 		try {
-			closeSession();
+			disconnect();
 
-			sshClient = new JSch();
+			JSch sshClient = new JSch();
 			sshSession = sshClient.getSession(
-					ProxyMain.settings.getUsername(), 
-					ProxyMain.settings.getServerAddr(),
-					ProxyMain.settings.getServerPort());
-			sshSession.setPassword(ProxyMain.settings.getPassword());
+					ProxyServer.settings.getUsername(), 
+					ProxyServer.settings.getServerAddr(),
+					ProxyServer.settings.getServerPort());
+			sshSession.setPassword(ProxyServer.settings.getPassword());
 			sshSession.setConfig("StrictHostKeyChecking", "no"); // ask | yes | no
-			sshSession.setServerAliveCountMax(ProxyMain.settings.getSshAliveMaxCount());
-			sshSession.setServerAliveInterval(ProxyMain.settings.getSshAliveIntervalMs());
+			sshSession.setServerAliveCountMax(ProxyServer.settings.getSshAliveMaxCount());
+			sshSession.setServerAliveInterval(ProxyServer.settings.getSshAliveIntervalMs());
 			sshSession.setDaemonThread(true);
 			sshSession.connect();
 
-			ProxyMain.log.info("SSH client ver: " + sshSession.getClientVersion() + ", server ver: "
-					+ sshSession.getServerVersion());
+			ProxyServer.log.info("SSH tunnel connected.");
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
@@ -37,12 +35,12 @@ public class SshClient {
 	public static Channel getStreamForwarder(String targetHost, int targetPort, boolean retrying)
 			throws JSchException, IOException {
 		try {
-			Channel channel = SshClient.sshSession.getStreamForwarder(targetHost, targetPort);
-			channel.connect(ProxyMain.settings.getSshChannelOpenTimeoutMs());
+			Channel channel = sshSession.getStreamForwarder(targetHost, targetPort);
+			channel.connect(ProxyServer.settings.getSshChannelOpenTimeoutMs());
 			return channel;
 		} catch (JSchException ex) {
 			if (!retrying && "session is down".equals(ex.getMessage())) {
-				ProxyMain.log.info("Reconnecting SSH Tunnel");
+				ProxyServer.log.info("Reconnecting SSH tunnel");
 				connect();
 				return getStreamForwarder(targetHost, targetPort, true);
 			} else {
@@ -51,11 +49,13 @@ public class SshClient {
 		}
 	}
 
-	private static void closeSession() {
+	private static void disconnect() {
 		if (sshSession != null) {
 			try {
-				sshSession.disconnect();
+                sshSession.disconnect();
+                ProxyServer.log.info("SSH tunnel disconnected.");
 			} catch (Exception ex) {
+				ProxyServer.log.info("exception: " + ex.getMessage());
 				ex.printStackTrace();
 			}
 		}
