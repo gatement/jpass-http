@@ -2,6 +2,7 @@ package net.johnsonlau.jproxy.lib;
 
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketTimeoutException;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import net.johnsonlau.jproxy.lib.conf.ProxyLog;
@@ -22,15 +23,19 @@ public class ProxyServer implements Runnable {
 		try {
 			SshClient.connect();
 			serverSocket = new ServerSocket(ProxyServer.settings.getProxyPort());
-			log.info("Http proxy started at port: " + String.valueOf(settings.getProxyPort()));
+			serverSocket.setSoTimeout(1000);
+			log.info("==== Http proxy started at port: " + String.valueOf(settings.getProxyPort()));
 			while (true) {
-				Socket socket = serverSocket.accept();
-				new ProxySocketHandler(socket).start();
+				try {
+					Socket socket = serverSocket.accept();
+					new ProxySocketHandler(socket).start();
+				} catch (SocketTimeoutException ex) {
+				}
 				
 				Thread.sleep(1); // allow for interrupting
 			}
 		} catch (InterruptedException ex) {
-			log.info("Http proxy is closed.");
+			log.info("==== Http proxy stopped.");
 		} catch (Exception ex) {
 			log.info("exception: " + ex.getMessage());
 			ex.printStackTrace();
@@ -43,6 +48,8 @@ public class ProxyServer implements Runnable {
 					ex.printStackTrace();
 				}
 			}
+
+			SshClient.disconnect();
 		}
 	}
 }

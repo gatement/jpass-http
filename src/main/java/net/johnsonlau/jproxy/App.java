@@ -12,8 +12,16 @@ public class App {
 		settings.setUsername(System.getProperty("username", "root"));
 		settings.setPassword(System.getProperty("password", ""));
 		settings.setProxyPort(Integer.parseInt(System.getProperty("proxyPort", "8119")));
-		
-        final Thread thread = new Thread(new ProxyServer(settings, new MyProxyLog()), "ProxyThread");
-        thread.run();
+
+		final Thread thread = new Thread(new ProxyServer(settings, new MyProxyLog()), "ProxyThread");
+		thread.run();
+
+		// to be stopped 
+		//thread.start();
+		//try {
+		//	Thread.sleep(10000);
+		//} catch (InterruptedException ex) {
+		//}
+		//thread.interrupt();
 	}
 }

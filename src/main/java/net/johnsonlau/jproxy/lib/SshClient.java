@@ -26,7 +26,7 @@ public class SshClient {
 			sshSession.setDaemonThread(true);
 			sshSession.connect();
 
-			ProxyServer.log.info("SSH tunnel connected.");
+			ProxyServer.log.info("==== SSH tunnel connected.");
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
@@ -49,11 +49,11 @@ public class SshClient {
 		}
 	}
 
-	private static void disconnect() {
+	public static void disconnect() {
 		if (sshSession != null) {
 			try {
                 sshSession.disconnect();
-                ProxyServer.log.info("SSH tunnel disconnected.");
+                ProxyServer.log.info("==== SSH tunnel disconnected.");
 			} catch (Exception ex) {
 				ProxyServer.log.info("exception: " + ex.getMessage());
 				ex.printStackTrace();
