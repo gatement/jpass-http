@@ -2,6 +2,7 @@ package net.johnsonlau.jproxy;
 
 import net.johnsonlau.jproxy.impl.MyProxyLog;
 import net.johnsonlau.jproxy.lib.ProxyServer;
+import net.johnsonlau.jproxy.lib.SshClient;
 import net.johnsonlau.jproxy.lib.conf.ProxySettings;
 
 public class App {

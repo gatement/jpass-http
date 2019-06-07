@@ -35,7 +35,6 @@ public class ProxyServer implements Runnable {
 				Thread.sleep(1); // allow for interrupting
 			}
 		} catch (InterruptedException ex) {
-			log.info("==== Http proxy stopped.");
 		} catch (Exception ex) {
 			log.info("exception: " + ex.getMessage());
 			ex.printStackTrace();
@@ -48,8 +47,8 @@ public class ProxyServer implements Runnable {
 					ex.printStackTrace();
 				}
 			}
-
 			SshClient.disconnect();
+			log.info("==== Http proxy stopped.");
 		}
 	}
 }

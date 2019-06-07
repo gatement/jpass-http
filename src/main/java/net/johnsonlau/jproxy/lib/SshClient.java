@@ -58,6 +58,7 @@ public class SshClient {
 				ProxyServer.log.info("exception: " + ex.getMessage());
 				ex.printStackTrace();
 			}
+			sshSession = null;
 		}
 	}
 
