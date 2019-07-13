@@ -38,44 +38,48 @@ public class ProxySocketHandler extends Thread {
 				// Finish receiving HTTP headers
 				if (headStr.length() > 4
 						&& headStr.substring(headStr.length() - 4, headStr.length()).equals("\r\n\r\n")) {
+					
+					ProxyServer.log.info(headStr.toString());
+
 					// Extract HTTP method and target server:
 					//   Example1: CONNECT www.example.com:443 HTTP/1.1
 					//   Example2: POST http://www.example.com/a/b/c HTTP/1.1
 					String[] firstLine = headStr.toString().split("\r\n")[0].split(" ");
+					
+					// 1. get httpMethod
 					String httpMethod = firstLine[0];
 
+					// 2. get targetHost, targetPort
 					String hostLine = firstLine[1];
 					String targetHost = "";
 					int targetPort = 80;
-					if (hostLine.startsWith("http")) {
+					if (hostLine.toLowerCase().startsWith("http")) {
 						String[] host = hostLine.split("://")[1].split("/")[0].split(":");
 						targetHost = host[0];
-						targetPort = 80;
 						if (host.length > 1) {
 							targetPort = Integer.valueOf(host[1]);
 						}
 					} else {
 						String[] host = hostLine.split(":");
 						targetHost = host[0];
-						targetPort = 80;
 						if (host.length > 1) {
 							targetPort = Integer.valueOf(host[1]);
 						}
 					}
-
 					// Connect target server
 					ProxyServer.log.info("Connect target " + targetHost + ":" + String.valueOf(targetPort));
 
+					// 3. create proxy channel
 					// Use SSH Tunnel to connect remote server
 					sshChannel = SshClient.getStreamForwarder(targetHost, targetPort, false);
 					proxyInput = sshChannel.getInputStream();
 					proxyOutput = sshChannel.getOutputStream();
-
 					// Optional: Connect remote server directly
 					// proxySocket = new Socket(targetHost, targetPort);
 					// proxyInput = proxySocket.getInputStream();
 					// proxyOutput = proxySocket.getOutputStream();
 
+					// 4. response CONNECT or transmit to targetHost
 					// Process HTTP Method CONNECT
 					if ("CONNECT".equalsIgnoreCase(httpMethod)) {
 						// For HTTPS request, consume the initiative HTTP request and send back response
@@ -93,6 +97,7 @@ public class ProxySocketHandler extends Thread {
 				inputByte = clientInput.read();
 			}
 
+			// do the following transmission
 			if (sshChannel != null) {
 				// New thread continue sending data to target server
 				new ProxyStreamingThread(clientInput, proxyOutput).start();

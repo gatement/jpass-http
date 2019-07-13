@@ -1,7 +1,6 @@
 package net.johnsonlau.jproxy.lib.conf;
 
 public class ProxySettings {
-
 	private int SSH_ALIVE_MAX_COUNT = 3;
 	private int SSH_ALIVE_INTERVAL_MS = 60000;
 	private int SSH_CHANNEL_OPEN_TIMEOUT_MS = 10000;

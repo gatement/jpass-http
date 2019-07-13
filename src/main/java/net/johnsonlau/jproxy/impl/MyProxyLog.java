@@ -12,4 +12,5 @@ public class MyProxyLog extends ProxyLog {
 		String dateString = "[" + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()) + "] ";
 		System.out.println(dateString + msg);
 	}
+
 }
