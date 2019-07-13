@@ -6,8 +6,6 @@ import java.io.OutputStream;
 import java.net.Socket;
 import java.net.SocketException;
 
-import com.jcraft.jsch.Channel;
-
 public class ProxySocketHandler extends Thread {
 
 	private Socket socket;
@@ -25,7 +23,6 @@ public class ProxySocketHandler extends Thread {
 		Socket proxySocket = null;
 		InputStream proxyInput = null;
 		OutputStream proxyOutput = null;
-		Channel sshChannel = null;
 		try {
 			clientInput = socket.getInputStream();
 			clientOutput = socket.getOutputStream();
@@ -70,14 +67,10 @@ public class ProxySocketHandler extends Thread {
 					ProxyServer.log.info("Connect target " + targetHost + ":" + String.valueOf(targetPort));
 
 					// 3. create proxy channel
-					// Use SSH Tunnel to connect remote server
-					sshChannel = SshClient.getStreamForwarder(targetHost, targetPort, false);
-					proxyInput = sshChannel.getInputStream();
-					proxyOutput = sshChannel.getOutputStream();
-					// Optional: Connect remote server directly
-					// proxySocket = new Socket(targetHost, targetPort);
-					// proxyInput = proxySocket.getInputStream();
-					// proxyOutput = proxySocket.getOutputStream();
+					// Connect remote server directly
+					proxySocket = new Socket(targetHost, targetPort);
+					proxyInput = proxySocket.getInputStream();
+					proxyOutput = proxySocket.getOutputStream();
 
 					// 4. response CONNECT or transmit to targetHost
 					// Process HTTP Method CONNECT
@@ -97,19 +90,17 @@ public class ProxySocketHandler extends Thread {
 				inputByte = clientInput.read();
 			}
 
-			// do the following transmission
-			if (sshChannel != null) {
-				// New thread continue sending data to target server
-				new ProxyStreamingThread(clientInput, proxyOutput).start();
+			// 5. do the following transmission
+			// New thread continue sending data to target server
+			new ProxyStreamingThread(clientInput, proxyOutput).start();
 
-				// Receive target response
-				byte[] data = new byte[65536]; // 64KB
-				int readCount = proxyInput.read(data);
-				while (readCount != -1) {
-					clientOutput.write(data, 0, readCount);
-					clientOutput.flush();
-					readCount = proxyInput.read(data);
-				}
+			// Receive target response
+			byte[] data = new byte[65536]; // 64KB
+			int readCount = proxyInput.read(data);
+			while (readCount != -1) {
+				clientOutput.write(data, 0, readCount);
+				clientOutput.flush();
+				readCount = proxyInput.read(data);
 			}
 		} catch (SocketException ex) {
 			// peer closed the socket
@@ -156,13 +147,6 @@ public class ProxySocketHandler extends Thread {
 				try {
 					socket.close();
 				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
-			if (sshChannel != null) {
-				try {
-					sshChannel.disconnect();
-				} catch (Exception e) {
 					e.printStackTrace();
 				}
 			}

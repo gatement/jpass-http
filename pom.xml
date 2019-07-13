@@ -3,11 +3,11 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>net.johnsonlau</groupId>
-	<artifactId>jproxy</artifactId>
+	<artifactId>jproxy-http</artifactId>
 	<version>0.1.0</version>
 	<packaging>jar</packaging>
 
-	<name>jproxy</name>
+	<name>jproxy-http</name>
 	<url>http://maven.apache.org</url>
 
 	<properties>
@@ -15,14 +15,10 @@
 	</properties>
 
 	<dependencies>
-		<dependency>
-			<groupId>com.jcraft</groupId>
-			<artifactId>jsch</artifactId>
-			<version>0.1.55</version>
-		</dependency>
 	</dependencies>
+
 	<build>
-		<finalName>jproxy</finalName>
+		<finalName>jproxy-http</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
