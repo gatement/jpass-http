@@ -12,8 +12,7 @@ public class ProxySocketHandler extends Thread {
 
 	public ProxySocketHandler(Socket socket) {
 		this.socket = socket;
-		ProxyServer.log.info("Creating connection, connection count up to = "
-				+ Integer.valueOf(ProxyServer.connectionCount.incrementAndGet()));
+		//ProxyServer.log.info("Creating connection, connection count up to = " + Integer.valueOf(ProxyServer.connectionCount.incrementAndGet()));
 	}
 
 	@Override
@@ -36,7 +35,7 @@ public class ProxySocketHandler extends Thread {
 				if (headStr.length() > 4
 						&& headStr.substring(headStr.length() - 4, headStr.length()).equals("\r\n\r\n")) {
 					
-					ProxyServer.log.info(headStr.toString());
+					//ProxyServer.log.info(headStr.toString());
 
 					// Extract HTTP method and target server:
 					//   Example1: CONNECT www.example.com:443 HTTP/1.1
@@ -151,8 +150,7 @@ public class ProxySocketHandler extends Thread {
 				}
 			}
 
-			ProxyServer.log.info("Closed connection, connection count down to = "
-					+ Integer.valueOf(ProxyServer.connectionCount.decrementAndGet()));
+			//ProxyServer.log.info("Closed connection, connection count down to = " + Integer.valueOf(ProxyServer.connectionCount.decrementAndGet()));
 		}
 	}
 }
