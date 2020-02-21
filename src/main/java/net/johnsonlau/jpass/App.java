@@ -1,16 +1,16 @@
-package net.johnsonlau.jproxy;
+package net.johnsonlau.jpass;
 
-import net.johnsonlau.jproxy.impl.MyProxyLog;
-import net.johnsonlau.jproxy.lib.ProxyServer;
-import net.johnsonlau.jproxy.lib.conf.ProxySettings;
+import net.johnsonlau.jpass.impl.MyPassLog;
+import net.johnsonlau.jpass.lib.PassServer;
+import net.johnsonlau.jpass.lib.conf.PassSettings;
 
 public class App {
 	public static void main(String[] args) {
-		ProxySettings settings = new ProxySettings();
+		PassSettings settings = new PassSettings();
 		settings.setProxyPort(Integer.parseInt(System.getProperty("proxyPort", "8118")));
 		settings.setLocalListening(Boolean.parseBoolean(System.getProperty("localListening", "true")));
 
-		final Thread thread = new Thread(new ProxyServer(settings, new MyProxyLog()), "ProxyThread");
+		final Thread thread = new Thread(new PassServer(settings, new MyPassLog()), "ProxyThread");
 		thread.run();
 
 		// to be stopped 

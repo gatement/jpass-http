@@ -3,11 +3,11 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>net.johnsonlau</groupId>
-	<artifactId>jproxy-http</artifactId>
+	<artifactId>jpass-http</artifactId>
 	<version>0.1.0</version>
 	<packaging>jar</packaging>
 
-	<name>jproxy-http</name>
+	<name>jpass-http</name>
 	<url>http://maven.apache.org</url>
 
 	<properties>
@@ -18,7 +18,7 @@
 	</dependencies>
 
 	<build>
-		<finalName>jproxy-http</finalName>
+		<finalName>jpass-http</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -42,7 +42,7 @@
 					</descriptorRefs>
 					<archive>
 						<manifest>
-							<mainClass>net.johnsonlau.jproxy.App</mainClass>
+							<mainClass>net.johnsonlau.jpass.App</mainClass>
 						</manifest>
 					</archive>
 				</configuration>

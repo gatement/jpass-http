@@ -1,13 +1,13 @@
-package net.johnsonlau.jproxy.lib.conf;
+package net.johnsonlau.jpass.lib.conf;
 
-public class ProxySettings {
+public class PassSettings {
 	private int proxyPort = 8118;
 	private boolean localListening = true;
 
-	public ProxySettings() {
+	public PassSettings() {
 	}
 
-	public ProxySettings(int proxyPort, boolean localListening) {
+	public PassSettings(int proxyPort, boolean localListening) {
 		this.proxyPort = proxyPort;
 		this.localListening = localListening;
 	}

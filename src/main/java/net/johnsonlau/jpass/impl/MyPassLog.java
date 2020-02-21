@@ -1,11 +1,11 @@
-package net.johnsonlau.jproxy.impl;
+package net.johnsonlau.jpass.impl;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import net.johnsonlau.jproxy.lib.conf.ProxyLog;
+import net.johnsonlau.jpass.lib.conf.PassLog;
 
-public class MyProxyLog extends ProxyLog {
+public class MyPassLog extends PassLog {
 
 	@Override
 	public void info(String msg) {

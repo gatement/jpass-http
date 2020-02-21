@@ -1,6 +1,6 @@
-package net.johnsonlau.jproxy.lib.conf;
+package net.johnsonlau.jpass.lib.conf;
 
-public class ProxyLog {
+public class PassLog {
 	public void info(String msg) {
 		System.out.println(msg);
 	}

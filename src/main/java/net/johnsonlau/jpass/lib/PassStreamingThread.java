@@ -1,15 +1,15 @@
-package net.johnsonlau.jproxy.lib;
+package net.johnsonlau.jpass.lib;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-public class ProxyStreamingThread extends Thread {
+public class PassStreamingThread extends Thread {
 
 	private InputStream input;
 	private OutputStream output;
 
-	public ProxyStreamingThread(InputStream input, OutputStream output) {
+	public PassStreamingThread(InputStream input, OutputStream output) {
 		this.input = input;
 		this.output = output;
 	}

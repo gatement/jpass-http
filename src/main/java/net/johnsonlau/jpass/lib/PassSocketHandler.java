@@ -1,4 +1,4 @@
-package net.johnsonlau.jproxy.lib;
+package net.johnsonlau.jpass.lib;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -6,11 +6,11 @@ import java.io.OutputStream;
 import java.net.Socket;
 import java.net.SocketException;
 
-public class ProxySocketHandler extends Thread {
+public class PassSocketHandler extends Thread {
 
 	private Socket socket;
 
-	public ProxySocketHandler(Socket socket) {
+	public PassSocketHandler(Socket socket) {
 		this.socket = socket;
 		//ProxyServer.log.info("Creating connection, connection count up to = " + Integer.valueOf(ProxyServer.connectionCount.incrementAndGet()));
 	}
@@ -63,7 +63,7 @@ public class ProxySocketHandler extends Thread {
 						}
 					}
 					// Connect target server
-					ProxyServer.log.info("Connect target " + targetHost + ":" + String.valueOf(targetPort));
+					PassServer.log.info("Connect target " + targetHost + ":" + String.valueOf(targetPort));
 
 					// 3. create proxy channel
 					// Connect remote server directly
@@ -91,7 +91,7 @@ public class ProxySocketHandler extends Thread {
 
 			// 5. do the following transmission
 			// New thread continue sending data to target server
-			new ProxyStreamingThread(clientInput, proxyOutput).start();
+			new PassStreamingThread(clientInput, proxyOutput).start();
 
 			// Receive target response
 			byte[] data = new byte[65536]; // 64KB
@@ -104,7 +104,7 @@ public class ProxySocketHandler extends Thread {
 		} catch (SocketException ex) {
 			// peer closed the socket
 		} catch (Exception ex) {
-			ProxyServer.log.info("exception: " + ex.getMessage());
+			PassServer.log.info("exception: " + ex.getMessage());
 			ex.printStackTrace();
 		} finally {
 			if (proxyInput != null) {
