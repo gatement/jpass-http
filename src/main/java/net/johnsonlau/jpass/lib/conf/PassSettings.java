@@ -1,30 +1,30 @@
 package net.johnsonlau.jpass.lib.conf;
 
 public class PassSettings {
-	private int proxyPort = 8118;
-	private boolean localListening = true;
+    private int proxyPort = 8118;
+    private boolean localListening = true;
 
-	public PassSettings() {
-	}
+    public PassSettings() {
+    }
 
-	public PassSettings(int proxyPort, boolean localListening) {
-		this.proxyPort = proxyPort;
-		this.localListening = localListening;
-	}
+    public PassSettings(int proxyPort, boolean localListening) {
+        this.proxyPort = proxyPort;
+        this.localListening = localListening;
+    }
 
-	public boolean getLocalListening() {
-		return this.localListening;
-	}
+    public int getProxyPort() {
+        return this.proxyPort;
+    }
 
-	public void setLocalListening(boolean localListening) {
-		this.localListening = localListening;
-	}
+    public void setProxyPort(int proxyPort) {
+        this.proxyPort = proxyPort;
+    }
 
-	public int getProxyPort() {
-		return this.proxyPort;
-	}
+    public boolean getLocalListening() {
+        return this.localListening;
+    }
 
-	public void setProxyPort(int proxyPort) {
-		this.proxyPort = proxyPort;
-	}
+    public void setLocalListening(boolean localListening) {
+        this.localListening = localListening;
+    }
 }
